@@ -1,14 +1,18 @@
-// here we use a struct to define our data types. PathBuf is like a String, but for system paths that works cross platform
+use clap::Parser; // clap is a arg parse tool we can use
+
+// here we use a struct to define our data types. 
+
+#[derive(Parser)] // reads the command-line arguments, matches them to the fields in your struct, and parses them into Rust types automatically
 struct Cli {
+    /// the pattern to look for in our file
     pattern: String,
+    /// the path to the file to read, PathBuf is like a String, but for system paths that works cross platform
     path: std::path::PathBuf,
 }
 
 
 fn main() {
-    // first and second argument in the command line (cargo run -- some-pattern some-file) with some exceptions
-    let pattern = std::env::args().nth(1).expect("no pattern given");
-    let path = std::env::args().nth(2).expect("no path given");
+    let args = Cli::parse();
 
-    println!("pattern: {pattern}, path: {path}")
+    println!("pattern: {:?}, path: {:?}", args.pattern, args.path)
 }
