@@ -23,11 +23,23 @@ fn main() -> Result<()> {
         .with_context(|| format!("could not read file `{}`", args.path.display()))?;
 
 
-    for line in content.lines() {
-        if line.contains(&args.pattern) {
-            println!("{}", line)
-        }
-    }
+    find_matches(&content, &args.pattern, &mut std::io::stdout());
 
     Ok(())
+}
+
+// add third parameter writer, which can be any type that has implement Write. This can be a file, stdout, memory buffer... anything that can write
+fn find_matches(content: &str, pattern: &str, mut writer: impl std::io::Write) {
+    for line in content.lines() {
+        if line.contains(pattern) {
+            writeln!(writer, "{}", line); // writeln! writes formatted data out
+        }
+    }
+}
+
+#[test]
+fn find_a_match() {
+    let mut result = Vec::new();
+    find_matches("lorem ipsum\ndolor sit amet", "lorem", &mut result);
+    assert_eq!(result, b"lorem ipsum\n");
 }
